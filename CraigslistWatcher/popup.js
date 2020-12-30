@@ -14,20 +14,23 @@ for (let item of keyValues) {
 
 changeColor.onclick = function(element) {
     var color = element.target.value;
-    var newURL = "https://sfbay.craigslist.org/search/sby/zip?search_distance=15&postal=95050";
+    var keywords = searchData['keywords'];
+    keywords = keywords.replaceAll('|', '%7C').replaceAll(' ', '+')
+    var newURL = 'https://sfbay.craigslist.org/search/sby/zip?query='
+     + keywords + '&search_distance=' + searchData['mileage']
+     + '&postal=' + searchData['postcode'];
+    console.log(newURL);
 
-    console.log(searchData['mileage'] + ' is me');
-
-    fetch("https://shenghuanjie.github.io/", {
-        mode:'no-cors'
-    }).then(request => request.text())
-    .then(function(text){
-        // webText = text.match("Huanjie Sheng");
-        // console.log(webText);
-        console.log(text);
-    })
-    .catch((error) => {
-        console.warn(error);
-    });
+    // fetch(newURL, {
+    //     mode:'no-cors'
+    // }).then(request => request.text())
+    // .then(function(text){
+    //     // webText = text.match("Huanjie Sheng");
+    //     // console.log(webText);
+    //     console.log(text);
+    // })
+    // .catch((error) => {
+    //     console.warn(error);
+    // });
 
 };

@@ -18,6 +18,11 @@ const keyValues = ['mileage', 'postcode', 'keywords'];
 function updateKeyValues(keyValues){
     for (let item of keyValues) {
         let inputElement = document.querySelector('input[name="' + item + '"]');
+
+        chrome.storage.sync.get([item], function(data) {
+          inputElement.setAttribute('value', data[item]);
+        });
+
         inputElement.addEventListener('input', function updateValue(e){
           chrome.storage.sync.set({
               [item]: e.target.value,
