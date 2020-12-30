@@ -9,7 +9,8 @@ changeColor.onclick = function(element) {
   let color = element.target.value;
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     chrome.tabs.executeScript(tabs.id,{
-        code: 'document.body.style.backgroundColor = "' + color + '";'
+        // code: 'document.body.style.backgroundColor = "' + color + '";'
+        file: 'action.js'
         //If you had something somewhat more complex you can use an IIFE:
         //code: '(function (){return document.body.innerText;})();'
         //If your code was complex, you should store it in a
@@ -17,8 +18,3 @@ changeColor.onclick = function(element) {
     });
   });
 };
-
-function setTheColor() {
-  document.body.style.backgroundColor = "' + color + '";
-  console.log("test me");
-}
