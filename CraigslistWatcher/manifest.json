@@ -3,23 +3,29 @@
     "version": "1.0",
     "description": "Build an Extension!",
     "background": {
-        "scripts": ["background.js"],
+        "scripts": [
+            "js/background.js"
+        ],
         "persistent": false
     },
     "browser_action": {
-        "default_popup": "popup.html",
+        "default_popup": "html/popup.html",
         "default_icon": {
-          "48": "icon.png"
+          "48": "images/craigslist.png"
         }
     },
-    "options_page": "options.html",
+    "options_page": "html/options.html",
     "icons": {
-      "48": "icon.png"
+      "48": "images/craigslist.png"
     },
     "permissions": [
+        "tabs",
         "activeTab",
         "declarativeContent",
-        "storage"
+        "storage",
+        "notifications",
+        "alarms",
+        "https://*/*"
     ],
     "manifest_version": 2
 }
