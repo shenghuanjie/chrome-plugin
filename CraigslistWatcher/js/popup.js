@@ -51,3 +51,37 @@ toggleSwitch.addEventListener('click', function(element) {
         options: currentStatus
     });
 });
+
+function addLinks(listOfDicts){
+    if (listOfDicts != null){
+        var postDiv = document.getElementById("newposts");
+        while (postDiv.firstChild) {
+            postDiv.removeChild(postDiv.lastChild);
+        }
+        var height = 100;
+        for (const [index, dict] of listOfDicts.entries()) {
+            let newDiv = document.createElement("div");
+            newDiv.setAttribute('class', 'row');
+
+            let newLink = document.createElement('a');
+            newLink.id = 'postid' + dict['postId'];
+            newLink.setAttribute('href', dict['postLink']);
+            newLink.setAttribute('style', 'width:500px;margin-top:10px;margin-bottom:10px');
+            newLink.setAttribute('target', '_blank');
+            newLink.setAttribute('rel', 'noopener noreferrer');
+            newLink.innerText = index + '. ' + dict['postName'];
+            newLink.style.fontSize =  '16px';
+            newDiv.appendChild(newLink);
+
+            postDiv.appendChild(newDiv);
+            height += 30;
+        }
+        postDiv.setAttribute("style","height:" + height + "px");
+    }
+}
+
+chrome.storage.local.get('newPosts', function(data){
+    if ('newPosts' in data){
+        addLinks(data.newPosts);
+    }
+})

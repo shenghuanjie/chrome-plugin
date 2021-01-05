@@ -1,31 +1,35 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>test</title>
+    <title>craigslist</title>
     <style>
-      button {
-        height: 30px;
-        width: 30px;
-        outline: none;
-      }
+        html, body {
+            width: 200px;
+            height: 100px;
+            margin: 10px;
+            padding: 0;
+        }
+        button {
+          height: 40px;
+          width: 50px;
+          margin-top :10px;
+          margin-bottom :10px;
+          margin-left :20px;
+          margin-right :20px;
+          padding: 1px;
+          display: inline-block;
+        }
     </style>
   </head>
   <body>
     <h3 id="status">Monitoring...</h3>
-    <div>
+    <div class="column">
         <button class="button" id="checkCraigslist">Open</button>
-    </div>
-    <div>
         <button class="button" id="monitorCraigslist">Stop</button>
+    </div>
+    <hr style="width:85%;text-align:left;margin-left:0;margin-right:10">
+    <div class="column" id=newposts>
     </div>
     <script src="/js/popup.js"></script>
   </body>
-  <style>
-    .button {
-        height: 40px;
-        width: 100px;
-        margin-top :10px;
-        margin-bottom :10px
-    }
-   </style>
 </html>

@@ -75,14 +75,17 @@ async function findData(strURL, callback) {
     });
 }
 
+function playSound(){
+    new Audio('/sounds/notification.mp3').play();
+}
+
 function showNotification(newPosts) {
-    console.log('notified');
+    playSound();
     chrome.notifications.create('', {
-        type: 'list',
+        type: 'basic',
         iconUrl: 'images/craigslist.png',
         title: 'Craigslist Alert',
-        message: 'A new post has been found!',
-        items: newPosts.map(info => ({title: info[3].slice(0, 62), message: ''}))
+        message: newPosts[0][3].slice(0, 62)
      }, function(notificationId) {});
 }
 
@@ -121,8 +124,17 @@ chrome.alarms.onAlarm.addListener(function(alarmName) {
             }
             // 1: link, 2: id, 3: title
             var allPosts = [...webText.matchAll(linkPattern)];
+            console.log(allPosts.map(info => info[3]));
             var newPosts = allPosts.filter(
                 match => !(existingIds.includes(match[2])));
+            console.log('' + newPosts.length + ': ' + hasIds);
+
+            // we save new Posts as well as creating an notification.
+            chrome.storage.local.set({
+                'newPosts': newPosts.map(info => ({
+                    postLink: info[1], postName: info[3], postId: info[2]}))
+            }, function(){});
+
             if (newPosts.length > 0){
                 if (hasIds){
                     showNotification(newPosts);
