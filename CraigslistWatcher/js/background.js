@@ -1,7 +1,7 @@
 const defaultValues = {
     'mileage': 10,
     'postcode': 95050,
-    'keywords': 'bike | microwave | fan'
+    'keywords': 'bike | microwave | fan | tent'
 }
 const keyValues = Object.keys(defaultValues);
 let linkPattern = /<a href="(https:\/\/sfbay\.craigslist\.org\/sby\/zip\/d\/.*\.html)" data-id="(\d+)" class=".*" id="postid_\d+"\s*>(.*)<\/a>/gm;
