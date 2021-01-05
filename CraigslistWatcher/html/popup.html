@@ -11,8 +11,21 @@
     </style>
   </head>
   <body>
-    <h2>Craigslist</h2>
-    <button id="checkCraigslist"></button>
+    <h3 id="status">Monitoring...</h3>
+    <div>
+        <button class="button" id="checkCraigslist">Open</button>
+    </div>
+    <div>
+        <button class="button" id="monitorCraigslist">Stop</button>
+    </div>
     <script src="/js/popup.js"></script>
   </body>
+  <style>
+    .button {
+        height: 40px;
+        width: 100px;
+        margin-top :10px;
+        margin-bottom :10px
+    }
+   </style>
 </html>

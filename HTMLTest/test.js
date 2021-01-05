@@ -53,11 +53,11 @@ let existingId = ["7255471518"];
 
 const fs = require('fs');
 fs.readFile(filePath, 'utf-8', (err, textString) => {
-  if(err) { throw err; }
-  // console.log('data: ', textString);
-  var webResults = textString.matchAll(pattern);
-  var newPosts = [...webResults].filter(match => !(existingId.includes(match[2])));
-  console.log(newPosts.map(info => ({title: info[2], message: info[3]})));
+if(err) { throw err; }
+// console.log('data: ', textString);
+var webResults = textString.matchAll(pattern);
+var newPosts = [...webResults].filter(match => !(existingId.includes(match[2])));
+// console.log(newPosts.map(info => ({title: info[2], message: info[3]})));
 
  // console.log(newPosts.map(info => info[2]));
 
@@ -65,6 +65,9 @@ fs.readFile(filePath, 'utf-8', (err, textString) => {
   //console.log(existingId);
 });
 
+
+var a = '1234567890'
+console.log(a.slice(0, 100))
 
 // let a = Array.from([1,2,3]);
 // console.log(a);

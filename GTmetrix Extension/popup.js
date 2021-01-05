@@ -22,3 +22,37 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }, false);
 }, false);
+
+
+ // chrome.tabs.create({
+ // active: false,
+ // url: 'http://stackoveflow.com/robots.txt'
+ // }, function(tab) {
+ //     chrome.tabs.executeScript(tab.id, {
+ //         code: 'localStorage.setItem("key", "value");'
+ //     }, function() {
+ //         chrome.tabs.remove(tab.id);
+ //     });
+ // });
+
+// chrome.runtime.sendMessage('', {
+//     type: 'notification',
+//     options: {
+//       title: 'Just wanted to notify you',
+//       message: 'How great it is!',
+//       iconUrl: 'icon.png',
+//       type: 'basic'
+//     }
+// });
+
+// fetch(newURL, {
+//     mode:'no-cors'
+// }).then(request => request.text())
+// .then(function(text){
+//     webText = text.matchAll('/<a href="https:\/\/sfbay\.craigslist\.org\/sby\/zip\/d\/.*\.html" data-id="\d+" class="result-title hdrlnk" id="postid_\d+">.*<\/a>/');
+//     console.log(webText);
+//     // console.log(text);
+// })
+// .catch((error) => {
+//     console.warn(error);
+// });

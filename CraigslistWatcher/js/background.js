@@ -1,17 +1,50 @@
+const defaultValues = {
+    'mileage': 10,
+    'postcode': 95050,
+    'keywords': 'bike | microwave | fan'
+}
+const keyValues = Object.keys(defaultValues);
+let linkPattern = /<a href="(https:\/\/sfbay\.craigslist\.org\/sby\/zip\/d\/.*\.html)" data-id="(\d+)" class=".*" id="postid_\d+"\s*>(.*)<\/a>/gm;
+let alarmName = 'craigslist';
+
 chrome.runtime.onInstalled.addListener(function() {
   chrome.storage.sync.set({color: '#3aa757'}, function() {
     console.log('The color is green.');
   });
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-    chrome.declarativeContent.onPageChanged.addRules([{
-      conditions: [new chrome.declarativeContent.PageStateMatcher({
-        pageUrl: {hostEquals: 'developer.chrome.com'},
-      })
-      ],
-          actions: [new chrome.declarativeContent.ShowPageAction()]
-    }]);
+
+  // set default options if not already existing
+  chrome.storage.sync.get(keyValues, function(storedValues){
+      if (! 'keywords' in storedValues || storedValues.keywords == null){
+          chrome.storage.sync.set(defaultValues, function() {
+              console.log(defaultValues);
+          });
+      }else{
+          console.log('Use existing defaultValues.');
+      }
   });
+
+  chrome.storage.local.set({'status': 'Start'}, function() {
+      console.log('Installed...')});
 });
+
+// set default options if not already existing
+chrome.storage.sync.get(keyValues, function(storedValues){
+    if (! 'keywords' in storedValues || storedValues.keywords == null){
+        chrome.storage.sync.set(defaultValues, function() {
+            console.log(defaultValues);
+            chrome.alarms.create(alarmName, {delayInMinutes: 1, periodInMinutes: 1});
+        });
+    }else{
+        console.log('Use existing defaultValues.');
+        chrome.alarms.create(alarmName, {delayInMinutes: 1, periodInMinutes: 1});
+    }
+});
+
+chrome.runtime.onStartup.addListener(function(){
+    chrome.storage.local.set({'status': 'Start'}, function() {
+        console.log('Installed...')});
+});
+
 
 function fetchURL(newURL){
     fetch(newURL, {
@@ -32,7 +65,6 @@ async function findData(strURL, callback) {
         req.onreadystatechange = function() {
             if (req.readyState == 4) {
                 if (req.status == 200) {
-                  console.info("Sucess!");
                   resolve(req.responseText);
                 }
                 else if (req.status == 404) console.info("URL doesn't exist!");
@@ -44,12 +76,13 @@ async function findData(strURL, callback) {
 }
 
 function showNotification(newPosts) {
+    console.log('notified');
     chrome.notifications.create('', {
         type: 'list',
         iconUrl: 'images/craigslist.png',
         title: 'Craigslist Alert',
         message: 'A new post has been found!',
-        items: newPosts.map(info => ({title: info[3], message: info[1]}))
+        items: newPosts.map(info => ({title: info[3].slice(0, 62), message: ''}))
      }, function(notificationId) {});
 }
 
@@ -69,28 +102,6 @@ function getURL(searchData){
     return newURL;
 }
 
-const defaultValues = {
-    'mileage': 10,
-    'postcode': 95050,
-    'keywords': 'bike | microwave | fan'
-}
-const keyValues = Object.keys(defaultValues);
-let linkPattern = /<a href="(https:\/\/sfbay\.craigslist\.org\/sby\/zip\/d\/.*\.html)" data-id="(\d+)" class=".*" id="postid_\d+"\s*>(.*)<\/a>/gm;
-let alarmName = 'craigslist';
-
-// set default options if not already existing
-chrome.storage.sync.get(keyValues, function(storedValues){
-    if (! 'keywords' in storedValues || storedValues.keywords == null){
-        chrome.storage.sync.set(defaultValues, function() {
-            console.log(defaultValues);
-            chrome.alarms.create(alarmName, {delayInMinutes: 1, periodInMinutes: 1});
-        });
-    }else{
-        console.log('Use existing defaultValues.');
-        chrome.alarms.create(alarmName, {delayInMinutes: 1, periodInMinutes: 1});
-    }
-});
-
 // set up alarm to check new post
 chrome.alarms.onAlarm.addListener(function(alarmName) {
     chrome.storage.sync.get(keyValues, async function(searchData) {
@@ -104,10 +115,9 @@ chrome.alarms.onAlarm.addListener(function(alarmName) {
 
         chrome.storage.local.get('craigslist_postids', function(data){
             var hasIds = 'craigslist_postids' in data;
+            var existingIds = [];
             if (hasIds){
-                var existingIds =  Array.from(data.craigslist_postids);
-            }else{
-                var existingIds = [];
+                existingIds =  Array.from(data.craigslist_postids);
             }
             // 1: link, 2: id, 3: title
             var allPosts = [...webText.matchAll(linkPattern)];
@@ -118,15 +128,26 @@ chrome.alarms.onAlarm.addListener(function(alarmName) {
                     showNotification(newPosts);
                 }
                 console.log(newPosts.map(info => info[3]));
-                existingIds = allPosts.map(info => info[2]);
-                chrome.storage.local.set({'craigslist_postids': existingIds},
+                let saveIds = allPosts.map(info => info[2]);
+                chrome.storage.local.set({'craigslist_postids': saveIds},
                     function(){
                         console.log("Saved a new array item");
-                        console.log(existingIds);
+                        console.log(saveIds);
                     });
             }else{
                 console.log('No new post found!');
             }
         });
     });
+});
+
+
+chrome.runtime.onMessage.addListener(data => {
+  if (data.type === 'toggle') {
+      if (data.options == 'Start'){
+          chrome.alarms.create(alarmName, {delayInMinutes: 1, periodInMinutes: 1});
+      }else{
+          chrome.alarms.clear(alarmName, function(){});
+      }
+  }
 });
