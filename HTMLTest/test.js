@@ -1,6 +1,7 @@
 var text = '<a href="https://sfbay.craigslist.org/sby/zip/d/milpitas-metal-desk-tools/7253428310.html" data-id="7253428310" class="result-title hdrlnk md-opjjpmhoiojifppkkcdabiobhakljdgm_doc" id="postid_7253428310">Metal desk (tools)</a>'
 var text2 = '<a href="https://sfbay.craigslist.org/sby/zip/d/san-jose-panasonic-1200-watt-microwave/7255471518.html" data-id="7255471518" class="result-title hdrlnk" id="postid_7255471518" >Panasonic 1200 Watt Microwave, 1.2 cubic ft</a>'
-var pattern = /<a href="(https:\/\/sfbay\.craigslist\.org\/sby\/zip\/d\/.*\.html)" data-id="(\d+)" class=".*" id="postid_\d+"\s*>(.*)<\/a>/gm;
+var text1 = '<a href="https://sfbay.craigslist.org/pen/zip/d/los-altos-free-emerson-microwave-for/7263309969.html" data-id="7263309969" class="result-title hdrlnk" id="postid_7263309969" >Free Emerson microwave for repair</a>'
+var pattern = /<a href="(https:\/\/sfbay\.craigslist\.org\/.*\/zip\/d\/.*\.html)" data-id="(\d+)" class=".*" id="postid_\d+"\s*>(.*)<\/a>/gm;
 // var webText = text.matchAll(pattern);
 // const array = [...text.matchAll(pattern)];
 // console.log(array[0]);
@@ -37,7 +38,7 @@ var pattern = /<a href="(https:\/\/sfbay\.craigslist\.org\/sby\/zip\/d\/.*\.html
 // client.send();
 // console.log(module.paths);
 // const jquery = require( "C:/Users/david/AppData/Roaming/npm/node_modules/jquery" );
-var filePath = "C:/Users/david/Desktop/test.log";
+var filePath = "D:/Git/chrome-plugin/webpage.html";
 //
 // let existingId = ["7255471518",
 //   '7255205394', '7255150131',
@@ -49,7 +50,7 @@ var filePath = "C:/Users/david/Desktop/test.log";
 //   '7255440128', '7255471518'
 // ];
 
-let existingId = ["7255471518"];
+let existingId = [];
 
 const fs = require('fs');
 fs.readFile(filePath, 'utf-8', (err, textString) => {
@@ -57,6 +58,7 @@ if(err) { throw err; }
 // console.log('data: ', textString);
 var webResults = textString.matchAll(pattern);
 var newPosts = [...webResults].filter(match => !(existingId.includes(match[2])));
+console.log(newPosts.map(info => info[3]));
 // console.log(newPosts.map(info => ({title: info[2], message: info[3]})));
 
  // console.log(newPosts.map(info => info[2]));
@@ -64,10 +66,6 @@ var newPosts = [...webResults].filter(match => !(existingId.includes(match[2])))
   //existingId.unshift(...newPosts.map(info => info[2]));
   //console.log(existingId);
 });
-
-
-var a = '1234567890'
-console.log(a.slice(0, 100))
 
 // let a = Array.from([1,2,3]);
 // console.log(a);

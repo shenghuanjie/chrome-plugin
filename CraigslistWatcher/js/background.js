@@ -4,7 +4,7 @@ const defaultValues = {
     'keywords': 'bike | microwave | fan | tent'
 }
 const keyValues = Object.keys(defaultValues);
-let linkPattern = /<a href="(https:\/\/sfbay\.craigslist\.org\/sby\/zip\/d\/.*\.html)" data-id="(\d+)" class=".*" id="postid_\d+"\s*>(.*)<\/a>/gm;
+let linkPattern = /<a href="(https:\/\/sfbay\.craigslist\.org\/.*\/zip\/d\/.*\.html)" data-id="(\d+)" class=".*" id="postid_\d+"\s*>(.*)<\/a>/gm;
 let alarmName = 'craigslist';
 
 chrome.runtime.onInstalled.addListener(function() {
