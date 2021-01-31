@@ -61,7 +61,7 @@ function fetchURL(newURL){
 async function findData(strURL, callback) {
     let req = new XMLHttpRequest();
     return new Promise(function(resolve, reject) {
-        req.open("GET", strURL, true);
+        req.open("GET", strURL + "?cache="+(Math.random()*1000000), true);
         req.onreadystatechange = function() {
             if (req.readyState == 4) {
                 if (req.status == 200) {
