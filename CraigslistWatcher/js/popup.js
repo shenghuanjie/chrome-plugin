@@ -4,14 +4,28 @@ chrome.storage.sync.get('color', function(data) {
   openPage.setAttribute('value', data.color);
 });
 
-const keyValues = ['mileage', 'postcode', 'keywords'];
+const keyValues = ['mileage', 'postcode', 'keywords', 'hasPic', 'postedToday'];
 const statusText = {'Start': 'Monitoring...', 'Stop': 'Pause!'};
 const buttonText = {'Start': 'Stop', 'Stop': 'Start'};
 function getURL(searchData){
     var keywords = searchData['keywords'];
     keywords = keywords.replaceAll('|', '%7C').replaceAll(' ', '%20');
-    var newURL = 'https://sfbay.craigslist.org/search/sby/zip?query='
-     + keywords + '&sort=date&search_distance=' + searchData['mileage']
+    if(keywords){
+        keywords = "query=" + keywords + "&";
+    }
+    if (searchData['hasPic']) {
+        hasPic = 'hasPic=1&'
+    }else{
+        hasPic = ''
+    }
+    if (searchData['postedToday']) {
+        postedToday = 'postedToday=1&'
+    }else{
+        postedToday = ''
+    }
+    var newURL = 'https://sfbay.craigslist.org/search/sby/zip?'
+     + keywords + 'sort=date&' + hasPic + postedToday
+     + 'search_distance=' + searchData['mileage']
      + '&postal=' + searchData['postcode'];
     return newURL;
 }

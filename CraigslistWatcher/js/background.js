@@ -1,7 +1,9 @@
 const defaultValues = {
-    'mileage': 10,
-    'postcode': 95050,
-    'keywords': 'bike | microwave | fan | tent'
+    'mileage': 25,
+    'postcode': 94538,
+    'keywords': '',
+    'hasPic': false,
+    'postedToday': true,
 }
 const keyValues = Object.keys(defaultValues);
 let linkPattern = /<a href="(https:\/\/sfbay\.craigslist\.org\/.*\/zip\/d\/.*\.html)" data-id="(\d+)" class=".*" id="postid_\d+"\s*>(.*)<\/a>/gm;
@@ -61,7 +63,7 @@ function fetchURL(newURL){
 async function findData(strURL, callback) {
     let req = new XMLHttpRequest();
     return new Promise(function(resolve, reject) {
-        req.open("GET", strURL + "?cache="+(Math.random()*1000000), true);
+        req.open("GET", strURL + "&?cache="+(Math.random()*1000000), true);
         req.onreadystatechange = function() {
             if (req.readyState == 4) {
                 if (req.status == 200) {
@@ -98,14 +100,29 @@ function showNotification(newPosts) {
 
 function getURL(searchData){
     var keywords = searchData['keywords'];
-    keywords = keywords.replaceAll('|', '%7C').replaceAll(' ', '%20');
-    var newURL = 'https://sfbay.craigslist.org/search/sby/zip?query='
-     + keywords + '&sort=date&search_distance=' + searchData['mileage']
+    keywords = keywords.replaceAll('|', '%7C').replaceAll(' ', '+');
+    if(keywords){
+        keywords = "query=" + keywords + "&";
+    }
+    if (searchData['hasPic']) {
+        hasPic = 'hasPic=1&'
+    }else{
+        hasPic = ''
+    }
+    if (searchData['postedToday']) {
+        postedToday = 'postedToday=1&'
+    }else{
+        postedToday = ''
+    }
+    var newURL = 'https://sfbay.craigslist.org/search/sby/zip?'
+     + keywords + 'sort=date&' + hasPic + postedToday
+     + 'search_distance=' + searchData['mileage']
      + '&postal=' + searchData['postcode'];
     return newURL;
 }
 
 // set up alarm to check new post
+const maxSavedPostIds=10000;
 chrome.alarms.onAlarm.addListener(function(alarmName) {
     chrome.storage.sync.get(keyValues, async function(searchData) {
         var newURL = getURL(searchData);
@@ -124,7 +141,7 @@ chrome.alarms.onAlarm.addListener(function(alarmName) {
             }
             // 1: link, 2: id, 3: title
             var allPosts = [...webText.matchAll(linkPattern)];
-            console.log(allPosts.map(info => info[3]));
+            console.log(allPosts);
             var newPosts = allPosts.filter(
                 match => !(existingIds.includes(match[2])));
             console.log('' + newPosts.length + ': ' + hasIds);
@@ -141,13 +158,28 @@ chrome.alarms.onAlarm.addListener(function(alarmName) {
                 }
                 console.log(newPosts.map(info => info[3]));
                 let saveIds = allPosts.map(info => info[2]);
-                chrome.storage.local.set({'craigslist_postids': saveIds},
+                //saveIds has to be in front to keep latest IDs
+                var idsToSave = saveIds.concat(existingIds);
+                if (idsToSave.length > maxSavedPostIds){
+                    idsToSave = idsToSave.slice(0, maxSavedPostIds);
+                }
+                chrome.storage.local.set({'craigslist_postids': idsToSave},
                     function(){
                         console.log("Saved a new array item");
                         console.log(saveIds);
+                        //console.log("Existing post IDs:");
+                        //console.log(existingIds);
+                        //console.log("Saving post IDs:");
+                        //console.log(idsToSave);
                     });
             }else{
                 console.log('No new post found!');
+                //console.log(allPosts);
+                //let saveIds = allPosts.map(info => info[2]);
+                //console.log("Current post IDs:");
+                //console.log(saveIds);
+                //console.log("Existing post IDs:");
+                //console.log(existingIds);
             }
         });
     });

@@ -14,7 +14,7 @@ function constructOptions(kButtonColors) {
 }
 constructOptions(kButtonColors);
 
-const keyValues = ['mileage', 'postcode', 'keywords'];
+const keyValues = ['mileage', 'postcode', 'keywords', 'hasPic', 'postedToday'];
 function updateKeyValues(keyValues){
     for (let item of keyValues) {
         let inputElement = document.querySelector('input[name="' + item + '"]');
@@ -23,13 +23,23 @@ function updateKeyValues(keyValues){
           inputElement.setAttribute('value', data[item]);
         });
 
-        inputElement.addEventListener('input', function updateValue(e){
-          chrome.storage.sync.set({
-              [item]: e.target.value,
-          }, function() {
-            console.log(item + ': ' + e.target.value);
-          })
-        });
+        if (inputElement.type == "checkbox"){
+            inputElement.addEventListener('change', function updateValue(e){
+              chrome.storage.sync.set({
+                  [item]: e.target.checked,
+              }, function() {
+                console.log(item + ': ' + e.target.checked);
+              })
+            });
+        }else{
+            inputElement.addEventListener('input', function updateValue(e){
+              chrome.storage.sync.set({
+                  [item]: e.target.value,
+              }, function() {
+                console.log(item + ': ' + e.target.value);
+              })
+            });
+        }
     }
 }
 updateKeyValues(keyValues);
