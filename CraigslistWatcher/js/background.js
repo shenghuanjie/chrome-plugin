@@ -143,7 +143,7 @@ chrome.alarms.onAlarm.addListener(function(alarmName) {
             var allPosts = [...webText.matchAll(linkPattern)];
             console.log(allPosts);
             var newPosts = allPosts.filter(
-                match => !(existingIds.includes(match[2])));
+                match => !(existingIds.includes(match[2] + "_" + match[3])));
             console.log('' + newPosts.length + ': ' + hasIds);
 
             // we save new Posts as well as creating an notification.
@@ -157,7 +157,8 @@ chrome.alarms.onAlarm.addListener(function(alarmName) {
                     showNotification(newPosts);
                 }
                 console.log(newPosts.map(info => info[3]));
-                let saveIds = allPosts.map(info => info[2]);
+                // add both post id and name to avoid id recycling
+                let saveIds = allPosts.map(info => info[2] + "_" + info[3]);
                 //saveIds has to be in front to keep latest IDs
                 var idsToSave = saveIds.concat(existingIds);
                 if (idsToSave.length > maxSavedPostIds){
