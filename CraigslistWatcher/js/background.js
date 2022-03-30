@@ -132,6 +132,7 @@ chrome.alarms.onAlarm.addListener(function(alarmName) {
         } catch (err) {
             console.log(err);
         }
+        console.log("Searching: " + newURL);
 
         chrome.storage.local.get('craigslist_postids', function(data){
             var hasIds = 'craigslist_postids' in data;
@@ -173,6 +174,7 @@ chrome.alarms.onAlarm.addListener(function(alarmName) {
                         //console.log("Saving post IDs:");
                         //console.log(idsToSave);
                     });
+                console.log("webText: " + webText);
             }else{
                 console.log('No new post found!');
                 //console.log(allPosts);

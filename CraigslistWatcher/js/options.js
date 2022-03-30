@@ -20,7 +20,11 @@ function updateKeyValues(keyValues){
         let inputElement = document.querySelector('input[name="' + item + '"]');
 
         chrome.storage.sync.get([item], function(data) {
-          inputElement.setAttribute('value', data[item]);
+          if (inputElement.type == "checkbox"){
+              inputElement.setAttribute("checked", data[item]);
+          }else{
+              inputElement.setAttribute('value', data[item]);
+          }
         });
 
         if (inputElement.type == "checkbox"){
