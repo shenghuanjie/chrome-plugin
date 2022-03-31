@@ -191,9 +191,9 @@ chrome.alarms.onAlarm.addListener(function(alarmName) {
         console.log("Searching: " + newURL);
 
         // avoid fetching nearby posts
-        var stopIndex = webText.indexOf("from nearby");
-        if (stopIndex != -1){
-            webText = webText.substring(0, stopIndex);
+        var stopIndex = webText.match("from nearby");
+        if (stopIndex != null){
+            webText = webText.substring(0, stopIndex.index);
         }
 
         chrome.storage.local.get('craigslist_postids', function(data){
