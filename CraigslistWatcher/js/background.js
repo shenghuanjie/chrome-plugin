@@ -149,7 +149,7 @@ function getURL(searchData)
 
     var newURL = 'https://sfbay.craigslist.org/search/sby/zip?' + urlArray.join('')
     if( newURL.charAt(newURL.length - 1) == "&"){
-      newURL = newURL.slice(0, -1)
+      newURL = newURL.slice(0, -1);
     }
     return newURL;
 }
