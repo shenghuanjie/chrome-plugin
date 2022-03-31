@@ -98,28 +98,84 @@ function showNotification(newPosts) {
 //     });
 // });
 
-function getURL(searchData){
-    var keywords = searchData['keywords'];
+
+
+function shuffle(array) {
+  let currentIndex = array.length,  randomIndex;
+
+  // While there remain elements to shuffle...
+  while (currentIndex != 0) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+}
+
+function getURL(searchData)
+{
+    var keywords = searchData["keywords"];
+    var hasPic = "";
+    var postedToday = "";
+    var searchDistance = "search_distance=" + searchData['mileage'] + '&';
+    var postcode = 'postal=' + searchData['postcode'] + '&';
+    var sortOption = 'sort=date&';
+    if (keywords === undefined) {
+      keywords = "";
+    }
     keywords = keywords.replaceAll('|', '%7C').replaceAll(' ', '+');
     if(keywords){
         keywords = "query=" + keywords + "&";
     }
-    if (searchData['hasPic']) {
-        hasPic = 'hasPic=1&'
+    if (searchData["hasPic"]) {
+        hasPic = "hasPic=1&"
     }else{
-        hasPic = ''
+        hasPic = ""
     }
-    if (searchData['postedToday']) {
-        postedToday = 'postedToday=1&'
+    if (searchData["postedToday"]) {
+        postedToday = "postedToday=1&"
     }else{
-        postedToday = ''
+        postedToday = ""
     }
-    var newURL = 'https://sfbay.craigslist.org/search/sby/zip?'
-     + keywords + 'sort=date&' + hasPic + postedToday
-     + 'search_distance=' + searchData['mileage']
-     + '&postal=' + searchData['postcode'];
+
+    var urlArray = [hasPic, postedToday, searchDistance, postcode, searchDistance, sortOption];
+    urlArray = shuffle(urlArray);
+
+    var newURL = 'https://sfbay.craigslist.org/search/sby/zip?' + urlArray.join('')
+    if( newURL.charAt(newURL.length - 1) == "&"){
+      newURL = newURL.slice(0, -1)
+    }
     return newURL;
 }
+
+// function getURL(searchData){
+//     var keywords = searchData['keywords'];
+//     keywords = keywords.replaceAll('|', '%7C').replaceAll(' ', '+');
+//     if(keywords){
+//         keywords = "query=" + keywords + "&";
+//     }
+//     if (searchData['hasPic']) {
+//         hasPic = 'hasPic=1&'
+//     }else{
+//         hasPic = ''
+//     }
+//     if (searchData['postedToday']) {
+//         postedToday = 'postedToday=1&'
+//     }else{
+//         postedToday = ''
+//     }
+//     var newURL = 'https://sfbay.craigslist.org/search/sby/zip?'
+//      + keywords + 'sort=date&' + hasPic + postedToday
+//      + 'search_distance=' + searchData['mileage']
+//      + '&postal=' + searchData['postcode'];
+//     return newURL;
+// }
 
 // set up alarm to check new post
 const maxSavedPostIds=10000;
@@ -133,6 +189,12 @@ chrome.alarms.onAlarm.addListener(function(alarmName) {
             console.log(err);
         }
         console.log("Searching: " + newURL);
+
+        // avoid fetching nearby posts
+        var stopIndex = webText.indexOf("from nearby");
+        if (stopIndex != -1){
+            webText = webText.substring(0, stopIndex);
+        }
 
         chrome.storage.local.get('craigslist_postids', function(data){
             var hasIds = 'craigslist_postids' in data;
