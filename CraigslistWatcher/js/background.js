@@ -1,4 +1,5 @@
 const defaultValues = {
+    "status": "Stop",
     'mileage': 25,
     'postcode': 94538,
     'keywords': '',
@@ -25,8 +26,8 @@ chrome.runtime.onInstalled.addListener(function() {
       }
   });
 
-  chrome.storage.local.set({'status': 'Start'}, function() {
-      console.log('Installed...')});
+  // chrome.storage.local.set({'status': 'Start'}, function() {
+  //     console.log('Installed...')});
 });
 
 // set default options if not already existing
@@ -34,18 +35,24 @@ chrome.storage.sync.get(keyValues, function(storedValues){
     if (! 'keywords' in storedValues || storedValues.keywords == null){
         chrome.storage.sync.set(defaultValues, function() {
             console.log(defaultValues);
-            chrome.alarms.create(alarmName, {delayInMinutes: 1, periodInMinutes: 1});
         });
-    }else{
-        console.log('Use existing defaultValues.');
-        chrome.alarms.create(alarmName, {delayInMinutes: 1, periodInMinutes: 1});
     }
 });
 
-chrome.runtime.onStartup.addListener(function(){
-    chrome.storage.local.set({'status': 'Start'}, function() {
-        console.log('Installed...')});
+// decide whether to auto start
+chrome.storage.sync.get("status", function(storedValue){
+    if (storedValue == "Start"){
+        console.log('Auto load and start.');
+        chrome.alarms.create(alarmName, {delayInMinutes: 1, periodInMinutes: 1});
+    }else{
+        console.log('Default no auto start.');
+    }
 });
+
+// chrome.runtime.onStartup.addListener(function(){
+//     chrome.storage.local.set({'status': 'Start'}, function() {
+//         console.log('Installed...')});
+// });
 
 
 function fetchURL(newURL){
